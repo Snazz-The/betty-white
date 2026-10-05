@@ -1,0 +1,70 @@
+# XcodeGen spec. Run `xcodegen generate` in this folder to produce Companion.xcodeproj.
+# To rename the app, change `name`, the target name, PRODUCT_NAME and PRODUCT_BUNDLE_IDENTIFIER below.
+name: Companion
+options:
+  bundleIdPrefix: com.snazz
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+targets:
+  Companion:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+        excludes:
+          - "Resources/*.md"
+      - path: Sources/Resources/Personality.md
+        buildPhase: resources
+    info:
+      path: Generated/Info.plist
+      properties:
+        CFBundleDisplayName: Companion
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.productivity
+        NSMicrophoneUsageDescription: Companion listens to your voice while you hold the push-to-talk hotkey.
+        NSSpeechRecognitionUsageDescription: Companion turns what you say into text so it can reply to you.
+    entitlements:
+      path: Generated/Companion.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.device.audio-input: true
+    settings:
+      base:
+        PRODUCT_NAME: Companion
+        PRODUCT_BUNDLE_IDENTIFIER: com.snazz.companion
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+  CompanionTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: Companion
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.snazz.companion.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Companion.app/Contents/MacOS/Companion"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  Companion:
+    build:
+      targets:
+        Companion: all
+        CompanionTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - CompanionTests

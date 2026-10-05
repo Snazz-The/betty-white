@@ -1,0 +1,43 @@
+name: Companion macOS build
+
+on:
+  push:
+    paths:
+      - "Companion/**"
+      - ".github/workflows/companion-macos.yml"
+  pull_request:
+    paths:
+      - "Companion/**"
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: Companion
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Build and test
+        run: |
+          set +e
+          xcodebuild test \
+            -project Companion.xcodeproj \
+            -scheme Companion \
+            -destination 'platform=macOS' \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM= \
+            > xcodebuild.log 2>&1
+          status=$?
+          grep -E "error:|warning:|Test Case .*(passed|failed)|Executed|\*\* (BUILD|TEST)" xcodebuild.log | sort -u
+          if [ $status -ne 0 ]; then tail -n 80 xcodebuild.log; fi
+          exit $status
