@@ -24,8 +24,13 @@ Run `xcodegen generate` again whenever you add or remove files.
 
 ### API key
 
-For now, set `ANTHROPIC_API_KEY` in the scheme (**Product › Scheme › Edit Scheme › Run › Arguments › Environment Variables**).
-Don't commit the scheme with the key in it; the generated project is gitignored, so this is safe by default.
+On first launch the chat popover asks for your Anthropic API key (get one at
+[console.anthropic.com](https://console.anthropic.com/settings/keys)). It's saved in your login Keychain
+under the service `com.snazz.companion`, account `anthropic-api-key`. Change or remove it later in
+**Settings** (⋯ menu in the popover › Settings…, or ⌘,).
+
+For development you can instead set `ANTHROPIC_API_KEY` in the scheme's environment variables;
+a key in the Keychain takes precedence. The key is never written to disk in the repo.
 
 ## Customizing
 
@@ -39,7 +44,8 @@ Don't commit the scheme with the key in it; the generated project is gitignored,
 Sources/
   App/        app entry point
   Brain/      CompanionBrain, Anthropic streaming client, config, personality
-  Views/      menu bar chat UI
+  Views/      menu bar chat UI and first-run onboarding
+  Settings/   Keychain storage and the Settings window
   Resources/  Personality.md
 Tests/        unit tests (SSE parsing, request shape)
 ```

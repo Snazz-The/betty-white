@@ -3,6 +3,8 @@ import SwiftUI
 /// The chat window shown from the menu bar icon.
 struct ChatPopoverView: View {
     @Environment(CompanionBrain.self) private var brain
+    @Environment(APIKeyStore.self) private var keys
+    @Environment(\.openSettings) private var openSettings
     @State private var draft = ""
     @FocusState private var inputFocused: Bool
 
@@ -10,12 +12,16 @@ struct ChatPopoverView: View {
         VStack(spacing: 0) {
             header
             Divider()
-            transcript
-            if let error = brain.lastError {
-                ErrorBanner(text: error) { brain.lastError = nil }
+            if keys.hasKey {
+                transcript
+                if let error = brain.lastError {
+                    ErrorBanner(text: error) { brain.lastError = nil }
+                }
+                Divider()
+                inputBar
+            } else {
+                OnboardingView()
             }
-            Divider()
-            inputBar
         }
         .frame(width: 380, height: 520)
         .onAppear { inputFocused = true }
@@ -38,7 +44,14 @@ struct ChatPopoverView: View {
             .disabled(brain.messages.isEmpty)
 
             Menu {
+                Button("Settings…") {
+                    NSApp.activate(ignoringOtherApps: true)
+                    openSettings()
+                }
+                .keyboardShortcut(",")
+                Divider()
                 Button("Quit Companion") { NSApplication.shared.terminate(nil) }
+                    .keyboardShortcut("q")
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

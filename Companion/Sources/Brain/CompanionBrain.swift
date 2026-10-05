@@ -12,11 +12,11 @@ final class CompanionBrain {
 
     @ObservationIgnored private var replyTask: Task<Void, Never>?
     @ObservationIgnored private let personality: String
-    @ObservationIgnored private let apiKeyProvider: () -> String?
+    @ObservationIgnored private let apiKeyProvider: @MainActor () -> String?
 
     init(
         personality: String = Personality.load(),
-        apiKeyProvider: @escaping () -> String? = { ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] }
+        apiKeyProvider: @escaping @MainActor () -> String? = { ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] }
     ) {
         self.personality = personality
         self.apiKeyProvider = apiKeyProvider
