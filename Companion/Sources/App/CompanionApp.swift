@@ -2,29 +2,22 @@ import SwiftUI
 
 @main
 struct CompanionApp: App {
-    @State private var keys: APIKeyStore
-    @State private var brain: CompanionBrain
-
-    init() {
-        let keys = APIKeyStore()
-        _keys = State(initialValue: keys)
-        _brain = State(initialValue: CompanionBrain(apiKeyProvider: { keys.currentKey }))
-    }
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
         MenuBarExtra {
             ChatPopoverView()
-                .environment(brain)
-                .environment(keys)
+                .environment(appDelegate.brain)
+                .environment(appDelegate.keys)
         } label: {
-            Image(systemName: brain.state.menuBarSymbol)
+            Image(systemName: appDelegate.brain.state.menuBarSymbol)
         }
         .menuBarExtraStyle(.window)
 
         Settings {
             SettingsView()
-                .environment(brain)
-                .environment(keys)
+                .environment(appDelegate.brain)
+                .environment(appDelegate.keys)
         }
     }
 }

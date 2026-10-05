@@ -32,6 +32,27 @@ under the service `com.snazz.companion`, account `anthropic-api-key`. Change or 
 For development you can instead set `ANTHROPIC_API_KEY` in the scheme's environment variables;
 a key in the Keychain takes precedence. The key is never written to disk in the repo.
 
+## Desktop pet
+
+A small character floats above your windows. Drag it anywhere; clicks outside its body pass straight
+through to whatever is underneath. Right-click it to hide it, or toggle **Show Desktop Pet** in the
+popover's ⋯ menu. It reacts to the chat: thinking while waiting for a reply, talking while a reply streams.
+
+### Swapping in real art
+
+The art sits behind the `PetArtwork` protocol (`Sources/Pet/PetArtwork.swift`):
+
+```swift
+protocol PetArtwork {
+    var size: CGSize { get }
+    func view(for state: CompanionState) -> AnyView   // .idle, .listening, .thinking, .talking
+    func contains(_ point: CGPoint) -> Bool           // hit area; everything else is click-through
+}
+```
+
+Write a conformer (sprites, images, Lottie, Rive…) and return it from `PetArtworkProvider.current`.
+`BlobPetArtwork` is the placeholder.
+
 ## Customizing
 
 - **Personality:** edit `Sources/Resources/Personality.md`. It's the system prompt.
@@ -46,8 +67,9 @@ Sources/
   Brain/      CompanionBrain, Anthropic streaming client, config, personality
   Views/      menu bar chat UI and first-run onboarding
   Settings/   Keychain storage and the Settings window
+  Pet/        desktop pet window, artwork protocol, placeholder art
   Resources/  Personality.md
-Tests/        unit tests (SSE parsing, request shape)
+Tests/        unit tests
 ```
 
 CI (`.github/workflows/companion-macos.yml`) generates the project and runs `xcodebuild test` on a macOS runner.

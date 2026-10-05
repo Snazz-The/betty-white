@@ -7,6 +7,7 @@ struct ChatPopoverView: View {
     @Environment(\.openSettings) private var openSettings
     @State private var draft = ""
     @FocusState private var inputFocused: Bool
+    @AppStorage(PetVisibility.key) private var petVisible = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +50,7 @@ struct ChatPopoverView: View {
                     openSettings()
                 }
                 .keyboardShortcut(",")
+                Toggle("Show Desktop Pet", isOn: $petVisible)
                 Divider()
                 Button("Quit Companion") { NSApplication.shared.terminate(nil) }
                     .keyboardShortcut("q")
