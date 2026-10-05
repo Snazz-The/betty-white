@@ -4,6 +4,8 @@ import SwiftUI
 struct ChatPopoverView: View {
     @Environment(CompanionBrain.self) private var brain
     @Environment(APIKeyStore.self) private var keys
+    @Environment(VoiceController.self) private var voice
+    @Environment(VoiceSettings.self) private var voiceSettings
     @Environment(\.openSettings) private var openSettings
     @State private var draft = ""
     @FocusState private var inputFocused: Bool
@@ -15,6 +17,17 @@ struct ChatPopoverView: View {
             Divider()
             if keys.hasKey {
                 transcript
+                if brain.isListening {
+                    ListeningBar(text: voice.liveTranscript)
+                }
+                if let problem = voice.permissionProblem {
+                    ErrorBanner(
+                        text: problem.message,
+                        actionTitle: problem.settingsURL == nil ? nil : "Open System Settings",
+                        action: { voice.openPermissionSettings() },
+                        dismiss: { voice.dismissPermissionProblem() }
+                    )
+                }
                 if let error = brain.lastError {
                     ErrorBanner(text: error) { brain.lastError = nil }
                 }
@@ -35,6 +48,14 @@ struct ChatPopoverView: View {
                 ProgressView().controlSize(.small)
             }
             Spacer()
+            Button {
+                voiceSettings.isMuted.toggle()
+            } label: {
+                Image(systemName: voiceSettings.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+            }
+            .buttonStyle(.borderless)
+            .help(voiceSettings.isMuted ? "Unmute spoken replies" : "Mute spoken replies")
+
             Button {
                 brain.clear()
             } label: {
@@ -70,7 +91,7 @@ struct ChatPopoverView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 8) {
                     if brain.messages.isEmpty {
-                        Text("Say hello.")
+                        Text("Say hello, or hold \(voiceSettings.hotKey.displayString) and talk.")
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 40)
@@ -120,14 +141,38 @@ struct ChatPopoverView: View {
     }
 }
 
+private struct ListeningBar: View {
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "mic.fill").foregroundStyle(.red).symbolEffect(.pulse)
+            Text(text.isEmpty ? "Listening…" : text)
+                .font(.callout)
+                .foregroundStyle(text.isEmpty ? .secondary : .primary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer()
+        }
+        .padding(10)
+        .background(Color.red.opacity(0.08))
+    }
+}
+
 private struct ErrorBanner: View {
     let text: String
+    var actionTitle: String? = nil
+    var action: () -> Void = {}
     let dismiss: () -> Void
 
     var body: some View {
         HStack(alignment: .top) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-            Text(text).font(.callout).fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(text).font(.callout).fixedSize(horizontal: false, vertical: true)
+                if let actionTitle {
+                    Button(actionTitle, action: action).controlSize(.small)
+                }
+            }
             Spacer()
             Button(action: dismiss) { Image(systemName: "xmark") }.buttonStyle(.borderless)
         }

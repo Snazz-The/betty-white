@@ -4,12 +4,15 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let keys = APIKeyStore()
+    let voiceSettings = VoiceSettings()
     private(set) lazy var brain = CompanionBrain(apiKeyProvider: { [keys] in keys.currentKey })
+    private(set) lazy var voice = VoiceController(brain: brain, settings: voiceSettings)
     private var pet: PetWindowController?
     private var defaultsObserver: NSObjectProtocol?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !isRunningTests else { return }
+        _ = voice // registers the push-to-talk hotkey
         pet = PetWindowController(brain: brain)
         syncPetVisibility()
         defaultsObserver = NotificationCenter.default.addObserver(

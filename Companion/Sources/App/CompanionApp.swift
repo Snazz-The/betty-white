@@ -9,6 +9,8 @@ struct CompanionApp: App {
             ChatPopoverView()
                 .environment(appDelegate.brain)
                 .environment(appDelegate.keys)
+                .environment(appDelegate.voice)
+                .environment(appDelegate.voiceSettings)
         } label: {
             Image(systemName: appDelegate.brain.state.menuBarSymbol)
         }
@@ -18,6 +20,8 @@ struct CompanionApp: App {
             SettingsView()
                 .environment(appDelegate.brain)
                 .environment(appDelegate.keys)
+                .environment(appDelegate.voice)
+                .environment(appDelegate.voiceSettings)
         }
     }
 }

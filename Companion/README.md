@@ -32,6 +32,18 @@ under the service `com.snazz.companion`, account `anthropic-api-key`. Change or 
 For development you can instead set `ANTHROPIC_API_KEY` in the scheme's environment variables;
 a key in the Keychain takes precedence. The key is never written to disk in the repo.
 
+## Voice
+
+Hold **⌥Space** (Option+Space) anywhere, talk, and let go. Companion transcribes what you said
+with Apple's Speech framework (on-device when your language supports it) and sends it as a voice
+message. Replies to voice messages are shorter and are spoken aloud with the system voice.
+
+- **Mute:** the speaker button in the popover header.
+- The first time you use push-to-talk, macOS asks for **Microphone** and **Speech Recognition**
+  access. If you deny either, the popover shows a banner with a button that opens the right pane of
+  System Settings › Privacy & Security. Grant access there and try again.
+- Push-to-talk uses a Carbon global hotkey, so it needs no Accessibility permission.
+
 ## Desktop pet
 
 A small character floats above your windows. Drag it anywhere; clicks outside its body pass straight
@@ -68,6 +80,7 @@ Sources/
   Views/      menu bar chat UI and first-run onboarding
   Settings/   Keychain storage and the Settings window
   Pet/        desktop pet window, artwork protocol, placeholder art
+  Voice/      push-to-talk hotkey, speech recognition, text-to-speech
   Resources/  Personality.md
 Tests/        unit tests
 ```
