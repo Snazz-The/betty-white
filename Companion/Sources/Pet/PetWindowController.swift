@@ -31,7 +31,7 @@ final class PetWindowController {
         let host = NSHostingView(rootView: root)
         host.frame = CGRect(origin: .zero, size: artwork.size)
         panel.contentView = host
-        panel.setFrameOrigin(defaultOrigin())
+        panel.setFrameOrigin(clampedToScreen(PetPosition.saved ?? defaultOrigin()))
     }
 
     var isVisible: Bool { panel.isVisible }
@@ -62,7 +62,9 @@ final class PetWindowController {
     private func endDrag() {
         dragOrigin = nil
         dragMouseStart = nil
-        panel.setFrameOrigin(clampedToScreen(panel.frame.origin))
+        let origin = clampedToScreen(panel.frame.origin)
+        panel.setFrameOrigin(origin)
+        PetPosition.saved = origin
     }
 
     // MARK: - Placement
@@ -113,6 +115,25 @@ final class PetWindowController {
         let frame = panel.frame
         let local = CGPoint(x: mouse.x - frame.minX, y: frame.maxY - mouse.y)
         panel.ignoresMouseEvents = !artwork.contains(local)
+    }
+}
+
+/// Where the pet was last dropped, so it comes back to the same spot after relaunch.
+enum PetPosition {
+    private static let key = "pet.origin"
+
+    static var saved: CGPoint? {
+        get {
+            guard let values = UserDefaults.standard.array(forKey: key) as? [Double], values.count == 2 else { return nil }
+            return CGPoint(x: values[0], y: values[1])
+        }
+        set {
+            if let newValue {
+                UserDefaults.standard.set([Double(newValue.x), Double(newValue.y)], forKey: key)
+            } else {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
     }
 }
 

@@ -38,7 +38,10 @@ Hold **⌥Space** (Option+Space) anywhere, talk, and let go. Companion transcrib
 with Apple's Speech framework (on-device when your language supports it) and sends it as a voice
 message. Replies to voice messages are shorter and are spoken aloud with the system voice.
 
-- **Mute:** the speaker button in the popover header.
+- **Mute:** the speaker button in the popover header, or Settings › Voice.
+- **Change the hotkey, voice, or speed:** Settings › Voice. The hotkey needs at least one modifier.
+  By default only replies to spoken messages are read aloud; turn on
+  "Also speak replies to typed messages" to hear everything.
 - The first time you use push-to-talk, macOS asks for **Microphone** and **Speech Recognition**
   access. If you deny either, the popover shows a banner with a button that opens the right pane of
   System Settings › Privacy & Security. Grant access there and try again.
@@ -48,7 +51,7 @@ message. Replies to voice messages are shorter and are spoken aloud with the sys
 
 A small character floats above your windows. Drag it anywhere; clicks outside its body pass straight
 through to whatever is underneath. Right-click it to hide it, or toggle **Show Desktop Pet** in the
-popover's ⋯ menu. It reacts to the chat: thinking while waiting for a reply, talking while a reply streams.
+popover's ⋯ menu. It stays where you leave it, across relaunches. It reacts to the chat: thinking while waiting for a reply, talking while a reply streams.
 
 ### Swapping in real art
 
@@ -64,6 +67,20 @@ protocol PetArtwork {
 
 Write a conformer (sprites, images, Lottie, Rive…) and return it from `PetArtworkProvider.current`.
 `BlobPetArtwork` is the placeholder.
+
+## Settings
+
+Open from the popover's ⋯ menu › **Settings…** (⌘,).
+
+- **General:** API key, launch at login (via `SMAppService`; macOS may ask you to approve it in
+  System Settings › General › Login Items), show/hide the pet.
+- **Voice:** push-to-talk shortcut, mute, voice, speaking speed, preview.
+
+The pet's position is remembered between launches.
+
+## Roadmap
+
+- Phase 2: hands-free wake word.
 
 ## Customizing
 

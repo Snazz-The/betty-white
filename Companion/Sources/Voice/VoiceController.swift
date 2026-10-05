@@ -38,6 +38,11 @@ final class VoiceController {
         hotKeyRegistered = hotKey.register(settings.hotKey)
     }
 
+    /// Releases the hotkey, e.g. while recording a new one in Settings.
+    func suspendHotKey() {
+        hotKey.unregister()
+    }
+
     func stopSpeaking() {
         speaker.stop()
     }

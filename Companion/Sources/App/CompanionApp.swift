@@ -22,6 +22,7 @@ struct CompanionApp: App {
                 .environment(appDelegate.keys)
                 .environment(appDelegate.voice)
                 .environment(appDelegate.voiceSettings)
+                .environment(appDelegate.launchAtLogin)
         }
     }
 }

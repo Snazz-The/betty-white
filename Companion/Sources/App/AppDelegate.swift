@@ -5,6 +5,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let keys = APIKeyStore()
     let voiceSettings = VoiceSettings()
+    let launchAtLogin = LaunchAtLogin()
     private(set) lazy var brain = CompanionBrain(apiKeyProvider: { [keys] in keys.currentKey })
     private(set) lazy var voice = VoiceController(brain: brain, settings: voiceSettings)
     private var pet: PetWindowController?
