@@ -10,7 +10,8 @@ final class PetWindowController {
     private var dragMouseStart: CGPoint?
     private var mouseMonitors: [Any] = []
 
-    init(brain: CompanionBrain, artwork: PetArtwork = PetArtworkProvider.current) {
+    init(brain: CompanionBrain, artwork: PetArtwork? = nil) {
+        let artwork = artwork ?? PetArtworkProvider.current
         self.artwork = artwork
         panel = PetPanel(size: artwork.size)
 
